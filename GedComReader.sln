@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThunderMain.GEDCOM2XML", "GEDCOM2XML\ThunderMain.GEDCOM2XML.csproj", "{0EE32355-499E-45F2-A8CB-D1DB79DC6A3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{4BC8D056-9645-43E5-9B35-6CE5CC501763}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BC8D056-9645-43E5-9B35-6CE5CC501763}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BC8D056-9645-43E5-9B35-6CE5CC501763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EE32355-499E-45F2-A8CB-D1DB79DC6A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EE32355-499E-45F2-A8CB-D1DB79DC6A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EE32355-499E-45F2-A8CB-D1DB79DC6A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EE32355-499E-45F2-A8CB-D1DB79DC6A3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

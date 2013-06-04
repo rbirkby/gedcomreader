@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ThunderMain.GedcomReader
@@ -17,7 +18,8 @@ namespace ThunderMain.GedcomReader
         private int _start; // Lexeme start marker
         private int _end; // Lexeme end marker
         private readonly Stream _stream;
-        private readonly Decoder _decoder;
+        private Decoder _decoder;
+        private readonly byte[] _preamble;
         private readonly byte[] _byteBuffer;
 
         private readonly char[] _chars;
@@ -39,12 +41,12 @@ namespace ThunderMain.GedcomReader
             _end = 0;
             _bufferSize = 0;
 
-
             _stream = stream;
 
             // TODO: Only change to ANSEL if requested in the feed
-            Encoding encoding = Encoding.ASCII;//new AnselEncoding();
+            Encoding encoding = Encoding.UTF8;//new AnselEncoding();
             _decoder = encoding.GetDecoder();
+            _preamble = encoding.GetPreamble();
 
             ReadChar();
             // _pos is zero based
@@ -57,8 +59,7 @@ namespace ThunderMain.GedcomReader
         /// <param name="encoding"></param>
         public void SwitchEncoding(Encoding encoding)
         {
-            // TODO: Implement this
-            throw new NotImplementedException();
+            _decoder = encoding.GetDecoder();
         }
 
         /// <summary>
@@ -96,7 +97,6 @@ namespace ThunderMain.GedcomReader
             // TODO: Why test _start and not _pos???
             if (_start > _bufferSize - 1024)
             {
-
                 RelocateBuffer();
                 // Read more chars
                 FillBuffer();
@@ -109,17 +109,24 @@ namespace ThunderMain.GedcomReader
         private void FillBuffer()
         {
             // Fill the buffer with more chars
-            int charsToRead = _chars.Length - _bufferSize;
+            int bytesToRead = _byteBuffer.Length - _bufferSize;
 
-            int charCount = _stream.Read(_byteBuffer, 0, charsToRead);
+            int byteCount = _stream.Read(_byteBuffer, 0, bytesToRead);
+
+            // Skip any byte order mark.
+            if (_pos == 0 && _byteBuffer.Take(_preamble.Length).SequenceEqual(_preamble))
+            {
+                Array.Copy(_byteBuffer, _preamble.Length, _byteBuffer, 0, byteCount - _preamble.Length);
+                byteCount -= _preamble.Length;
+            }
 
             // Use the decoder to convert from byteBuffer to chars
-            charCount = _decoder.GetChars(_byteBuffer, 0, charCount, _chars, _bufferSize);
+            int charCount = _decoder.GetChars(_byteBuffer, 0, byteCount, _chars, _bufferSize);
 
             _bufferSize += charCount;
 
             // EOF if can't read charsToRead chars
-            if (charCount < charsToRead)
+            if (byteCount < bytesToRead)
             {
                 _chars[_bufferSize] = '\0';
                 _bufferSize++;
